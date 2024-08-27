@@ -22,6 +22,7 @@ describe_dtlcor <- function(){
     cat("follow_time:  follow-up time \n")
     cat("enroll:       enrollment rate \n")
     cat("t:            information fraction \n")
+    cat("fix_rho:      NULL (use upper bound of rho) or values from 0 to 1 \n")
 }
 
 #' get the theoretical FWER given fixed correlation coefficient
