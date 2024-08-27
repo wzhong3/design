@@ -1,4 +1,29 @@
 
+#' description of parameters
+#'
+#' @export
+describe_dtlcor <- function(){
+    cat("nsim:         number of replicates \n")
+    cat("delta:        least difference to decide superiority of high dose \n")
+    cat("n:            sample size per arm at DTL look \n")
+    cat("N:            sample size per arm at final analysis \n")
+    cat("alpha:        targeted FWER \n")
+    cat("q_seq:        range of response rate to get alpha_t \n")
+    cat("              (can be 100(1-2*alpha)% CI of q) \n")
+    cat("gamma_seq:    range of hazard ratio of responder and non-responder \n")
+    cat("              to get alpha_t (can be 100(1-2*alpha)% CI  of gamma) \n")
+    cat("D:            number of events \n")
+    cat("mPFS:         median progression-free survival for standard of care, \n")
+    cat("              low dose and high dose \n")
+    cat("q:            responser rate for standard of care, \n")
+    cat("              low dose and high dose \n")
+    cat("gamma:        hazard ratio of responder and non-responder \n")
+    cat("drop_rate:    drop-out rate \n")
+    cat("follow_time:  follow-up time \n")
+    cat("enroll:       enrollment rate \n")
+    cat("t:            information fraction \n")
+}
+
 #' get the theoretical FWER given fixed correlation coefficient
 #'
 #' @export
