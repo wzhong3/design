@@ -16,7 +16,8 @@ Depends:
     ggplot2 (>= 3.5.1),
     data.table (>= 1.14),
     coin (>= 1.4.3),
-    ssanv (>= 1.1)
+    ssanv (>= 1.1),
+    cubature
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
