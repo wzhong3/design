@@ -10,7 +10,7 @@ License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
 Depends:
     MASS (>= 7.3.60),
     gsDesign (>= 3.5.0),
-    survival (>= 3.7.0),
+    survival (>= 3.6.0),
     dplyr (>= 1.1.4),
     tidyr (>= 1.3.0),
     ggplot2 (>= 3.5.1),
