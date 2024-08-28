@@ -17,15 +17,7 @@ get_S0 <- function(mPFS, q, gamma, t){
 #'
 get_f0 <- function(mPFS, q, gamma, t){
     S0 = get_S0(mPFS, q, gamma, t)
-    if (S0 == 0){
-        return(0)
-    } else{
-        solve_f0 = function(x){
-            f = dexp(t, log(2) / mPFS)
-            q*gamma*x*S0^(gamma-1) + (1-q)*x - f
-        }
-        uniroot(solve_f0, interval = c(0, 10^6), tol = 10^(-6))$root
-    }
+    f0 = dexp(t, log(2) / mPFS) / (q*gamma*S0^(gamma-1) + (1-q))
 }
 
 #' get alpha_t (minimum of alpha_s) given alpha and ranges of q and gamma
