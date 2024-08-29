@@ -83,8 +83,8 @@ tab_alpha_t <- function() {
                      textInput("gamma_seq", "Range of γ (can be 100(1-2α)% CI)", "0.2, 0.4"),
                      numericInput("q_seq_space", "Space to make a sequence for q", 0.01),
                      numericInput("gamma_seq_space", "Space to make a sequence for γ", 0.01),
-                     numericInput("fix_rho", "Fixed ρ or empty for using ρ*", ""),
                      numericInput("alpha_2", "Significance Level (α)", 0.025),
+                     numericInput("fix_rho", "Fixed ρ or empty for using ρ*", ""),
                  ),
                  mainPanel(
                      h4("Table of adjusted significance level"),
@@ -228,35 +228,14 @@ table_alpha = reactive({
     gamma_range = as.numeric(str_split(input$gamma_seq,",", simplify = TRUE))
     q_seq       = seq(q_range[1], q_range[2], input$q_seq_space)
     gamma_seq   = seq(gamma_range[1], gamma_range[2], input$gamma_seq_space)
+    alpha       = input$alpha_2
+    fix_rho     = as.numeric(input$fix_rho)
+    if (is.na(fix_rho)){
+        fix_rho = NULL
+    } 
     
-    fix_rho   = as.numeric(input$fix_rho)
-    alpha     = input$alpha_2
+    dtl_app_get_alpha_t(n, N, delta, q_seq, gamma_seq, alpha, fix_rho)
     
-    para_all    = expand.grid(q_seq, gamma_seq)
-    rho_alpha_s = NULL
-    for (i in 1:nrow(para_all)){
-        q_s     = para_all[i, 1]
-        gamma_s = para_all[i, 2]
-        
-        if (!is.na(fix_rho)){
-            rho = fix_rho
-        } else{
-            rho = dtl_cor_the_PH_upper_bound(tau_k = n/N,
-                                             pi_ar = 0.5,
-                                             q     = q_s,
-                                             gamma = gamma_s)
-        }
-        alpha_s  = dtl_get_alpha_s(delta, n, 1, rho, q_s, alpha) # no interim t = 1
-        rho_alpha_s = rbind(rho_alpha_s, data.frame(rho, alpha_s))
-    }
-    rst_alpha_s = data.frame(para_all, rho_alpha_s)
-    colnames(rst_alpha_s) = c("q", "gamma", "rho", "alpha_s")
-    
-    rst_alpha_t = unique(rst_alpha_s %>%
-                     filter(alpha_s == min(rst_alpha_s$alpha_s)) %>%
-                     rename_with(~"alpha_t", "alpha_s"))
-    
-    list(rst_alpha_t = rst_alpha_t, rst_alpha_s = rst_alpha_s)
 })
 
 

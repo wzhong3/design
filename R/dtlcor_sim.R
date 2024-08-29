@@ -24,37 +24,38 @@ get_f0 <- function(mPFS, q, gamma, t){
 #'
 #' @export
 #'
-dtl_app_get_alpha_t <- function(N, n, q_seq, gamma_seq, alpha, fix_rho = NULL){
-
+dtl_app_get_alpha_t = function(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = NULL){
+    
     # sample size calculation (naive and ignoring correlation)
-    tau     = n / N
     seq_all = expand.grid(q_seq, gamma_seq)
-
+    
     alpha_s_all = apply(seq_all, 1, function(x){
         q_s     = x[1]
         gamma_s = x[2]
-
+        
         # calculate rho
         if (!is.null(fix_rho)){
             rho = fix_rho
         } else{
-            rho = dtl_cor_the_PH_upper_bound(tau_k = tau,
+            rho = dtl_cor_the_PH_upper_bound(tau_k = n / N,
                                              pi_ar = 0.5,
-                                             q     = q_s,
+                                             q     = q_s, 
                                              gamma = gamma_s)
         }
         alpha_s  = dtl_get_alpha_s(delta, n, 1, rho, q_s, alpha) # no interim t = 1
-        data.frame(rho, tau, q_s, gamma_s, delta, n, alpha_s)
+        data.frame(q_s, gamma_s, rho, alpha_s)
     })
-    dat_alpha_s_all = data.frame(t(sapply(1:length(alpha_s_all), function(x){as.numeric(alpha_s_all[[x]])})))
-    colnames(dat_alpha_s_all) = c("rho", "tau", "q_s", "gamma_s", "delta", "n", "alpha_s")
-
-    rst = unique(dat_alpha_s_all %>%
-                     filter(alpha_s == min(dat_alpha_s_all$alpha_s)) %>%
-                     rename_with(~"alpha_t", "alpha_s"))
-
-    return(rst)
+    rst_alpha_s = data.frame(t(sapply(1:length(alpha_s_all), function(x){as.numeric(alpha_s_all[[x]])})))
+    colnames(rst_alpha_s) = c("q", "gamma", "rho", "alpha_s")
+    
+    rst_alpha_t = unique(rst_alpha_s %>%
+                             filter(alpha_s == min(rst_alpha_s$alpha_s)) %>%
+                             rename_with(~"alpha_t", "alpha_s"))
+    
+    list(rst_alpha_t = rst_alpha_t, rst_alpha_s = rst_alpha_s)
+    
 }
+
 
 #' simulate a single trial
 #'
