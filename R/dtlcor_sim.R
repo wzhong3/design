@@ -18,6 +18,7 @@ get_S0 <- function(mPFS, q, gamma, t){
 get_f0 <- function(mPFS, q, gamma, t){
     S0 = get_S0(mPFS, q, gamma, t)
     f0 = dexp(t, log(2) / mPFS) / (q*gamma*S0^(gamma-1) + (1-q))
+    f0
 }
 
 #' get alpha_t (minimum of alpha_s) given alpha and ranges of q and gamma
@@ -233,7 +234,6 @@ dtl_app_sim <- function(nsim, alpha_t,
                          D           = D,
                          N           = N,
                          n           = n,
-                         alpha       = alpha,
                          alpha_t     = alpha_t,
                          rbind(apply(rst_all_wide[, -1], 2, mean)))
 
