@@ -23,7 +23,7 @@ tab_fwer <- function() {
                                "0, 0.1"),
                      textInput("q", "Null response rate (q)", 
                                "0.3, 0.5, 0.95"),
-                     textInput("rho", "Correlation between statistics at DTL look and interim/final analysis (ρ)", 
+                     textInput("rho", "Correlation between statistics at DTL look and final analysis (ρ)", 
                                "0, 0.1, 0.2, 0.3, 0.4, 0.5"),
                      numericInput("alpha", "Significance level (α)", 0.025),
                  ),
