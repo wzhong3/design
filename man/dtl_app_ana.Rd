@@ -4,7 +4,7 @@
 \alias{dtl_app_ana}
 \title{analysis data}
 \usage{
-dtl_app_ana(dat_all, t, c)
+dtl_app_ana(dat_all, interim_t, interim_c)
 }
 \description{
 analysis data

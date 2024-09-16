@@ -2,10 +2,10 @@
 % Please edit documentation in R/dtlcor_sim.R
 \name{dtl_app_get_alpha_t}
 \alias{dtl_app_get_alpha_t}
-\title{get alpha_t (minimum of alpha_s) given alpha and ranges of q and gamma}
+\title{get alpha_t "minimum of alpha_s" given alpha and ranges of q and gamma}
 \usage{
 dtl_app_get_alpha_t(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = NULL)
 }
 \description{
-get alpha_t (minimum of alpha_s) given alpha and ranges of q and gamma
+get alpha_t "minimum of alpha_s" given alpha and ranges of q and gamma
 }

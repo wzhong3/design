@@ -15,9 +15,8 @@ dtl_app_sim(
   gamma,
   delta,
   drop_rate,
-  follow_time,
   enroll,
-  t
+  interim_t
 )
 }
 \description{

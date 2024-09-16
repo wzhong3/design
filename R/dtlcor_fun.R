@@ -19,9 +19,8 @@ describe_dtlcor <- function(){
     cat("              low dose and high dose \n")
     cat("gamma:        hazards ratio of responder and non-responder \n")
     cat("drop_rate:    drop-out rate \n")
-    cat("follow_time:  follow-up time \n")
     cat("enroll:       enrollment rate \n")
-    cat("t:            information fraction \n")
+    cat("interim_t:    information fraction at interim and final \n")
     cat("fix_rho:      NULL (use upper bound of rho) or values from 0 to 1 \n")
 }
 

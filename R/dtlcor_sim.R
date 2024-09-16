@@ -21,7 +21,7 @@ get_f0 <- function(mPFS, q, gamma, t){
     f0
 }
 
-#' get alpha_t (minimum of alpha_s) given alpha and ranges of q and gamma
+#' get alpha_t "minimum of alpha_s" given alpha and ranges of q and gamma
 #'
 #' @export
 #'
@@ -62,7 +62,7 @@ dtl_app_get_alpha_t = function(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = N
 #'
 #' @export
 #'
-dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, follow_time, enroll, t){
+dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, enroll, interim_t){
 
     accr_time = N / enroll # day per arm
 
@@ -87,12 +87,10 @@ dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, follow
     tt_cen   = tt_accr + Cen_Time
 
     dat_final_temp = tibble(ID, arm, X, Eve_Time, Cen_Time, tt_accr, tt_eve, tt_cen) %>%
-        mutate(censor = case_when(tt_eve < tt_cen & tt_eve < tt_accr + follow_time   ~ 0,
-                                  tt_cen <= tt_eve & tt_cen < tt_accr + follow_time  ~ 1,
-                                  tt_accr + follow_time <= tt_cen & tt_accr + follow_time <= tt_eve ~ 2),
+        mutate(censor = case_when(tt_eve < tt_cen ~ 0,
+                                  tt_cen <= tt_eve ~ 1),
                tt     = case_when(censor == 0 ~ tt_eve,
-                                  censor == 1 ~ tt_cen,
-                                  censor == 2 ~ tt_accr + follow_time)) %>%
+                                  censor == 1 ~ tt_cen)) %>%
         arrange(tt)
 
     # DTL stage
@@ -113,12 +111,12 @@ dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, follow
     dat_final_temp_3 = dat_final_temp_2 %>%
         mutate(D_cumsum = cumsum(censor==0))
 
-    t_length  = length(t)
+    t_length  = length(interim_t)
     dat_final = list()
     Z_all     = NULL
     for (k in 1:t_length){
 
-        D_k = ceiling(D*t[k])
+        D_k = ceiling(D*interim_t[k])
 
         if (max(dat_final_temp_3$D_cumsum) < D_k){
             tt_end = max(dat_final_temp_3$tt)
@@ -128,8 +126,8 @@ dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, follow
 
         dat_final[[k]] = dat_final_temp_3 %>%
             mutate(tt_end = tt_end) %>%
-            mutate(censor = if_else(tt > tt_end, 3, censor),
-                   tt     = if_else(censor != 3, tt, tt_end),
+            mutate(censor = if_else(tt > tt_end, 2, censor),
+                   tt     = if_else(censor != 2, tt, tt_end),
                    Time   = tt - tt_accr,
                    Delta  = if_else(censor == 0, 1, 0))
 
@@ -160,30 +158,29 @@ dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, follow
 #'
 #' @export
 #'
-dtl_app_ana <- function(dat_all, t, c){
+dtl_app_ana <- function(dat_all, interim_t, interim_c){
 
-    t_length     = length(t)
+    t_length     = length(interim_t)
     dat_WZ       = dat_all$dat_WZ
     dat_final    = dat_all$dat_final[[length(dat_all$dat_final)]]
 
     stop_interim = if_else(1 %in% dat_final$arm,
-                           which(dat_WZ[1, 1 + 2*(1:t_length)] > c)[1],
-                           which(dat_WZ[1, 2 + 2*(1:t_length)] > c)[1])
+                           which(dat_WZ[1, 1 + 2*(1:t_length)] > interim_c)[1],
+                           which(dat_WZ[1, 2 + 2*(1:t_length)] > interim_c)[1])
     stop_interim = if_else(is.na(stop_interim), length(dat_all$dat_final), stop_interim)
 
 
     I_21  = 2 %in% dat_final$arm
-    rej   = case_when(1 %in% dat_final$arm & !all(dat_WZ[1, 1 + 2*(1:t_length)] <= c) ~ 1,
-                      2 %in% dat_final$arm & !all(dat_WZ[1, 2 + 2*(1:t_length)] <= c) ~ 2,
+    rej   = case_when(1 %in% dat_final$arm & !all(dat_WZ[1, 1 + 2*(1:t_length)] <= interim_c) ~ 1,
+                      2 %in% dat_final$arm & !all(dat_WZ[1, 2 + 2*(1:t_length)] <= interim_c) ~ 2,
                       .default = 0)
 
     cen_rate  = mean(dat_final$censor!=0)
     cen_1     = mean(dat_final$censor==1)
     cen_2     = mean(dat_final$censor==2)
-    cen_3     = mean(dat_final$censor==3)
     dur       = dat_all$dat_final[[stop_interim]]$tt_end[1] - min(dat_final$tt_accr)
 
-    rst = data.frame(t = rbind(t), c = rbind(c), I_21, rej, cen_rate, cen_1, cen_2, cen_3, dur)
+    rst = data.frame(t = rbind(interim_t), c = rbind(interim_c), I_21, rej, cen_rate, cen_1, cen_2, dur)
     rownames(rst) = NULL
 
     return(rst)
@@ -196,20 +193,20 @@ dtl_app_ana <- function(dat_all, t, c){
 #'
 dtl_app_sim <- function(nsim, alpha_t,
                        D, N, n, mPFS, q, gamma, delta,
-                       drop_rate, follow_time, enroll, t){
+                       drop_rate, enroll, interim_t){
 
-    t_length  = length(t)
+    t_length  = length(interim_t)
 
-    OF_Design = gsDesign(k = length(t), test.type=1, sfu="OF", alpha = alpha_t, timing = t)
-    c         = OF_Design$upper$bound
+    OF_Design = gsDesign(k = t_length, test.type=1, sfu="OF", alpha = alpha_t, timing = interim_t)
+    interim_c = OF_Design$upper$bound
 
     rst_all = NULL
     for (i in 1:nsim){
         # simulate data
-        dat_all  = dtl_app_sim_single(D, N, n, mPFS, q, gamma, delta, drop_rate, follow_time, enroll, t)
+        dat_all  = dtl_app_sim_single(D, N, n, mPFS, q, gamma, delta, drop_rate, enroll, interim_t)
 
         # analysis data
-        rst     = dtl_app_ana(dat_all, t, c)
+        rst     = dtl_app_ana(dat_all, interim_t, interim_c)
         rst_all = rbind(rst_all, data.frame(rep = i, rst))
     }
 
@@ -229,7 +226,6 @@ dtl_app_sim <- function(nsim, alpha_t,
                          gamma       = gamma,
                          delta       = delta,
                          drop_rate   = drop_rate,
-                         follow_time = follow_time,
                          enroll      = enroll,
                          D           = D,
                          N           = N,
