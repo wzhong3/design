@@ -32,9 +32,8 @@ mPFS        = c(180, 276, 300)
 q           = c(0.2, 0.4, 0.5)
 gamma       = 0.15
 drop_rate   = 0.05
-follow_time = 10^6
 enroll      = 240 / 365.25
-t           = c(0.5, 1)
+interim_t   = c(0.5, 1)
 fix_rho     = NULL
 
 # --------------------basic function-----------------
@@ -55,11 +54,11 @@ dtl_app_get_alpha_t(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = 1)$rst_alpha
 dtl_app_get_alpha_t(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = 0)$rst_alpha_t[1,]
 
 # simulate a single trial
-dtl_single = dtl_app_sim_single(D, N, n, mPFS, q, gamma, delta, drop_rate, follow_time, enroll, t)
+dtl_single = dtl_app_sim_single(D, N, n, mPFS, q, gamma, delta, drop_rate, enroll, interim_t)
 
 # simulation results
 alpha_t     = dtl_app_get_alpha_t(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = NULL)$rst_alpha_t$alpha_t[1]
-dtl_summary = dtl_app_sim(nsim, alpha_t, D, N, n, mPFS, q, gamma, delta, drop_rate, follow_time, enroll, t)
+dtl_summary = dtl_app_sim(nsim, alpha_t, D, N, n, mPFS, q, gamma, delta, drop_rate, enroll, interim_t)
 
 # -------------------open the R shiny-----------------
 dtl_shiny()
