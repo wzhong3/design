@@ -32,7 +32,7 @@ mPFS        = c(180, 276, 300)
 q           = c(0.2, 0.4, 0.5)
 gamma       = 0.15
 drop_rate   = 0.05
-enroll      = 240 / 365.25
+enroll      = 20 * 12 / 365.25
 interim_t   = c(0.5, 1)
 fix_rho     = NULL
 
