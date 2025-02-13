@@ -2,10 +2,38 @@
 % Please edit documentation in R/dtlcor_sim.R
 \name{dtl_app_get_alpha_t}
 \alias{dtl_app_get_alpha_t}
-\title{get alpha_t "minimum of alpha_s" given alpha and ranges of q and gamma}
+\title{Minimum significance level for the final stage under drop-the-losers
+(DTL) design}
 \usage{
 dtl_app_get_alpha_t(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = NULL)
 }
+\arguments{
+\item{n}{Number of patients per treatment arm at the DTL look}
+
+\item{N}{Total number of patients in both selected and control arms
+at final analysis}
+
+\item{delta}{Least difference to decide superiority of high dose}
+
+\item{q_seq}{A vector of response rates under the null (can be 95\% CI)}
+
+\item{gamma_seq}{A vector of hazards ratios of responders and non-responders
+(can be 95\% CI)}
+
+\item{alpha}{A pre-specified FWER}
+
+\item{fix_rho}{Use fixed correlation coefficient or use theoretical upper
+bound to get alpha_t. If = NULL, then it uses upper bound;
+else if = real number between 0 and 1, then it use such
+number as fixed correlation coefficient.}
+}
+\value{
+A list of two data frames for minimum significance level alpha_t and
+significance level alpht_s given all combinations of q_seq and gamma_seq.
+}
 \description{
-get alpha_t "minimum of alpha_s" given alpha and ranges of q and gamma
+Get minimum significance level alpha_t (minimum of alpha_s)
+for the final analysis considering the ranges of response rate q and
+hazard ratio of responders and non-responders gamma given a pre-specified
+FWER alpha
 }

@@ -2,10 +2,27 @@
 % Please edit documentation in R/dtlcor_fun.R
 \name{dtl_tier_the}
 \alias{dtl_tier_the}
-\title{get the theoretical FWER given fixed correlation coefficient}
+\title{Theoretical family-wise type I error rate (FWER) given a fixed
+correlation coefficient under drop-the-losers (DTL) design}
 \usage{
 dtl_tier_the(delta, n, t, rho, q, alpha_s)
 }
+\arguments{
+\item{delta}{Least difference to decide superiority of high dose}
+
+\item{n}{Sample size per arm at DTL look}
+
+\item{t}{A vector of information fraction of final stage}
+
+\item{rho}{Fixed correlation coefficient}
+
+\item{q}{Response rate under the null}
+
+\item{alpha_s}{Significance level for the final stage}
+}
+\value{
+Theoretical FWER alpha
+}
 \description{
-get the theoretical FWER given fixed correlation coefficient
+Get the theoretical FWER alpha given fixed correlation coefficient
 }

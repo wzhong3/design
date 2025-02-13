@@ -1,8 +1,5 @@
 
-#' get survival function of non-responder
-#'
-#' @export
-#'
+# get survival function of non-responder
 get_S0 <- function(mPFS, q, gamma, t){
     solve_S0 = function(x){
         S = 1 - pexp(t, log(2) / mPFS)
@@ -11,20 +8,38 @@ get_S0 <- function(mPFS, q, gamma, t){
     uniroot(solve_S0, interval = c(0, 1), tol = 10^(-6))$root
 }
 
-#' get density function of non-responder
-#'
-#' @export
-#'
+# get density function of non-responder
 get_f0 <- function(mPFS, q, gamma, t){
     S0 = get_S0(mPFS, q, gamma, t)
     f0 = dexp(t, log(2) / mPFS) / (q*gamma*S0^(gamma-1) + (1-q))
     f0
 }
 
-#' get alpha_t "minimum of alpha_s" given alpha and ranges of q and gamma
+#' @title Minimum significance level for the final stage under drop-the-losers 
+#' (DTL) design
+#' 
+#' @description Get minimum significance level alpha_t (minimum of alpha_s) 
+#' for the final analysis considering the ranges of response rate q and 
+#' hazard ratio of responders and non-responders gamma given a pre-specified 
+#' FWER alpha
 #'
+#' @param n          Number of patients per treatment arm at the DTL look
+#' @param N          Total number of patients in both selected and control arms 
+#'                   at final analysis 
+#' @param delta      Least difference to decide superiority of high dose
+#' @param q_seq      A vector of response rates under the null (can be 95% CI)
+#' @param gamma_seq  A vector of hazards ratios of responders and non-responders
+#'                   (can be 95% CI)
+#' @param alpha      A pre-specified FWER
+#' @param fix_rho    Use fixed correlation coefficient or use theoretical upper
+#'                   bound to get alpha_t. If = NULL, then it uses upper bound;
+#'                   else if = real number between 0 and 1, then it use such 
+#'                   number as fixed correlation coefficient.
+#' 
+#' @return A list of two data frames for minimum significance level alpha_t and 
+#' significance level alpht_s given all combinations of q_seq and gamma_seq.
+#' 
 #' @export
-#'
 dtl_app_get_alpha_t = function(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = NULL){
     
     # sample size calculation (naive and ignoring correlation)
@@ -58,10 +73,32 @@ dtl_app_get_alpha_t = function(n, N, delta, q_seq, gamma_seq, alpha, fix_rho = N
 }
 
 
-#' simulate a single trial
+#' @title Simulate a single drop-the-losers (DTL) trial.
+#' 
+#' @description Simulate a single trial based on the DTL design
 #'
+#' @param D          Total number of events
+#' @param N          Total number of patients in both selected and control arms 
+#'                   at final analysis 
+#' @param n          Number of patients per treatment arm at the DTL look
+#' @param mPFS       A 3-entry vector of median progression-free survival times
+#'                   for control, low dose and high dose arms (assume 
+#'                   exponential time-to-event outcome for all arms and the 
+#'                   conditional distribution for responders and non-responders
+#'                   can be uniquely identified given q and gamma)
+#' @param q          A 3-entry vector of response rates under the null
+#' @param gamma      Hazards ratio of responders and non-responders
+#' @param delta      Least difference to decide superiority of high dose
+#' @param drop_rate  Drop-out rate
+#' @param enroll     Enrollment rate
+#' @param interim_t  A vector of information fractions of final stage
+#'              
+#' @return A list including (1) a data frame of response rates of low dose and 
+#' high dose W_1, W_2 and the log-rank test statistics Z_jk at kth interim 
+#' analysis if the jth arm is selected at DTL look; (2) data frames of 
+#' simulated data at interim or final analyses.
+#'                   
 #' @export
-#'
 dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, enroll, interim_t){
 
     accr_time = N / enroll # day per arm
@@ -154,10 +191,7 @@ dtl_app_sim_single <- function(D, N, n, mPFS, q, gamma, delta, drop_rate, enroll
 
 }
 
-#' analysis data
-#'
-#' @export
-#'
+# analysis data
 dtl_app_ana <- function(dat_all, interim_t, interim_c){
 
     t_length     = length(interim_t)
@@ -187,13 +221,38 @@ dtl_app_ana <- function(dat_all, interim_t, interim_c){
 
 }
 
-#' simulation function
+#' @title Simulation study for drop-the-losers (DTL) trial.
+#' 
+#' @description Simulation study for a trial based on the DTL design
 #'
+#' @param nsim       Number of replicates
+#' @param alpha_t    significance level for the final stage (recommend to 
+#'                   use minimum significance level alpha_t to control 
+#'                   family-wise type I error rate)
+#' @param D          Total number of events
+#' @param N          Total number of patients in both selected and control arms 
+#'                   at final analysis 
+#' @param n          Number of patients per treatment arm at the DTL look
+#' @param mPFS       A 3-entry vector of median progression-free survival times
+#'                   for control, low dose and high dose arms 
+#' @param q          A 3-entry vector of response rates under the null
+#' @param gamma      Hazards ratio of responders and non-responders
+#' @param delta      Least difference to decide superiority of high dose
+#' @param drop_rate  Drop-out rate
+#' @param enroll     Enrollment rate
+#' @param interim_t  A vector of information fractions of final stage
+#'                  
+#' @return A one row data frame of simulation results, including the parameter
+#' settings, the O'Brien-Fleming boundaries for interim and final analyses: 
+#' c.1, c.2, the overall censoring rate: cen_rate, the mean study duration: dur,
+#' the probability of high dose is better than low dose: prob_21, the probability
+#' of rejecting H_1 or H_2: rej_12, the probability of rejecting H_1 only: rej_1, 
+#' the probability of rejecting H_2 only: rej_2.
+#' 
 #' @export
-#'
 dtl_app_sim <- function(nsim, alpha_t,
-                       D, N, n, mPFS, q, gamma, delta,
-                       drop_rate, enroll, interim_t){
+                        D, N, n, mPFS, q, gamma, delta,
+                        drop_rate, enroll, interim_t){
 
     t_length  = length(interim_t)
 

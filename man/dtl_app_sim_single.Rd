@@ -2,7 +2,7 @@
 % Please edit documentation in R/dtlcor_sim.R
 \name{dtl_app_sim_single}
 \alias{dtl_app_sim_single}
-\title{simulate a single trial}
+\title{Simulate a single drop-the-losers (DTL) trial.}
 \usage{
 dtl_app_sim_single(
   D,
@@ -17,6 +17,38 @@ dtl_app_sim_single(
   interim_t
 )
 }
+\arguments{
+\item{D}{Total number of events}
+
+\item{N}{Total number of patients in both selected and control arms
+at final analysis}
+
+\item{n}{Number of patients per treatment arm at the DTL look}
+
+\item{mPFS}{A 3-entry vector of median progression-free survival times
+for control, low dose and high dose arms (assume
+exponential time-to-event outcome for all arms and the
+conditional distribution for responders and non-responders
+can be uniquely identified given q and gamma)}
+
+\item{q}{A 3-entry vector of response rates under the null}
+
+\item{gamma}{Hazards ratio of responders and non-responders}
+
+\item{delta}{Least difference to decide superiority of high dose}
+
+\item{drop_rate}{Drop-out rate}
+
+\item{enroll}{Enrollment rate}
+
+\item{interim_t}{A vector of information fractions of final stage}
+}
+\value{
+A list including (1) a data frame of response rates of low dose and
+high dose W_1, W_2 and the log-rank test statistics Z_jk at kth interim
+analysis if the jth arm is selected at DTL look; (2) data frames of
+simulated data at interim or final analyses.
+}
 \description{
-simulate a single trial
+Simulate a single trial based on the DTL design
 }

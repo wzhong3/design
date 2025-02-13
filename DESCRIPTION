@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Weibin", "Zhong", , "wzhong3@gmu.edu", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Drop-the-losers Design with Correlation Ajustment Simulation R Package
+Description: Drop-the-losers Design with Correlation Adjustment Simulation R Package
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Depends:

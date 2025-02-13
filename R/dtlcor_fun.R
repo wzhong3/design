@@ -1,31 +1,18 @@
 
-#' description of parameters
-#'
-#' @export
-describe_dtlcor <- function(){
-    cat("nsim:         number of replicates \n")
-    cat("q_seq:        range of response rate to get alpha_t \n")
-    cat("              (can be 100(1-2*alpha)% CI of q) \n")
-    cat("gamma_seq:    range of hazards ratio of responder and non-responder \n")
-    cat("              to get alpha_t (can be 100(1-2*alpha)% CI  of gamma) \n")
-    cat("delta:        least difference to decide superiority of high dose \n")
-    cat("n:            sample size per arm at DTL look \n")
-    cat("D:            number of events \n")
-    cat("N:            sample size per arm at final analysis \n")
-    cat("alpha:        targeted FWER \n")
-    cat("mPFS:         median progression-free survival for standard of care, \n")
-    cat("              low dose and high dose \n")
-    cat("q:            responser rate for standard of care, \n")
-    cat("              low dose and high dose \n")
-    cat("gamma:        hazards ratio of responder and non-responder \n")
-    cat("drop_rate:    drop-out rate \n")
-    cat("enroll:       enrollment rate \n")
-    cat("interim_t:    information fraction at interim and final \n")
-    cat("fix_rho:      NULL (use upper bound of rho) or values from 0 to 1 \n")
-}
-
-#' get the theoretical FWER given fixed correlation coefficient
-#'
+#' @title Theoretical family-wise type I error rate (FWER) given a fixed 
+#' correlation coefficient under drop-the-losers (DTL) design
+#' 
+#' @description Get the theoretical FWER alpha given fixed correlation coefficient
+#' 
+#' @param delta    Least difference to decide superiority of high dose
+#' @param n        Sample size per arm at DTL look
+#' @param t        A vector of information fraction of final stage
+#' @param rho      Fixed correlation coefficient
+#' @param q        Response rate under the null
+#' @param alpha_s  Significance level for the final stage
+#' 
+#' @return Theoretical FWER alpha
+#' 
 #' @export
 dtl_tier_the <- function(delta, n, t, rho, q, alpha_s){
 
@@ -83,10 +70,23 @@ dtl_tier_the <- function(delta, n, t, rho, q, alpha_s){
 
 }
 
-#' get the alpha_s given significance level alpha
+#' @title Significance level given a fixed correlation coefficient for the 
+#' final stage under drop-the-losers (DTL) design
+#' 
+#' @description Get significant level alpha_s based on a pre-specified FWER alpha 
+#' given a fixed correlation coefficient for the final stage 
+#' (reverse calculation of dtl_tier_the())
+#' 
+#' @param delta  Least difference to decide superiority of high dose
+#' @param n      Sample size per arm at DTL look
+#' @param t      A vector of information fraction of final stage
+#' @param rho    Fixed correlation coefficient
+#' @param q      Response rate under the null
+#' @param alpha  A pre-specified FWER
 #'
+#' @return Significance level alpha_s for the final stage
+#' 
 #' @export
-#'
 dtl_get_alpha_s <- function(delta, n, t, rho, q, alpha){
     alpha_s = uniroot(
         function(x,alpha,delta,n,t,rho,q){
@@ -104,10 +104,21 @@ dtl_get_alpha_s <- function(delta, n, t, rho, q, alpha){
     return(alpha_s)
 }
 
-#' get theoretical upper bound of correlation coefficient
+#' @title Theoretical upper bound of correlation coefficient between 
+#' time-to-event primary endpoint and binary surrogate endpoint
+#' 
+#' @description Get theoretical upper bound of correlation coefficient
 #'
+#' @param tau_k  Equals n/n_k, where n is the number of patients per treatment 
+#'               arm at the DTL look and n_k is the number of patients in both 
+#'               selected and control arms at the kth interim analysis.
+#' @param pi_ar  Allocation rate of treatment and control (0.5 by default)
+#' @param q      Response rate under the null
+#' @param gamma  Hazards ratio of responders and non-responders
+#' 
+#' @return Theoretical upper bound of correlation coefficient
+#' 
 #' @export
-#'
 dtl_cor_the_PH_upper_bound <- function(tau_k, pi_ar = 0.5, q, gamma){
 
     integrand = function(u) {

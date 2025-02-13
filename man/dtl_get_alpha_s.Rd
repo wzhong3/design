@@ -2,10 +2,29 @@
 % Please edit documentation in R/dtlcor_fun.R
 \name{dtl_get_alpha_s}
 \alias{dtl_get_alpha_s}
-\title{get the alpha_s given significance level alpha}
+\title{Significance level given a fixed correlation coefficient for the
+final stage under drop-the-losers (DTL) design}
 \usage{
 dtl_get_alpha_s(delta, n, t, rho, q, alpha)
 }
+\arguments{
+\item{delta}{Least difference to decide superiority of high dose}
+
+\item{n}{Sample size per arm at DTL look}
+
+\item{t}{A vector of information fraction of final stage}
+
+\item{rho}{Fixed correlation coefficient}
+
+\item{q}{Response rate under the null}
+
+\item{alpha}{A pre-specified FWER}
+}
+\value{
+Significance level alpha_s for the final stage
+}
 \description{
-get the alpha_s given significance level alpha
+Get significant level alpha_s based on a pre-specified FWER alpha
+given a fixed correlation coefficient for the final stage
+(reverse calculation of dtl_tier_the())
 }

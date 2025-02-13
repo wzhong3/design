@@ -2,7 +2,7 @@
 % Please edit documentation in R/dtlcor_sim.R
 \name{dtl_app_sim}
 \alias{dtl_app_sim}
-\title{simulation function}
+\title{Simulation study for drop-the-losers (DTL) trial.}
 \usage{
 dtl_app_sim(
   nsim,
@@ -19,6 +19,43 @@ dtl_app_sim(
   interim_t
 )
 }
+\arguments{
+\item{nsim}{Number of replicates}
+
+\item{alpha_t}{significance level for the final stage (recommend to
+use minimum significance level alpha_t to control
+family-wise type I error rate)}
+
+\item{D}{Total number of events}
+
+\item{N}{Total number of patients in both selected and control arms
+at final analysis}
+
+\item{n}{Number of patients per treatment arm at the DTL look}
+
+\item{mPFS}{A 3-entry vector of median progression-free survival times
+for control, low dose and high dose arms}
+
+\item{q}{A 3-entry vector of response rates under the null}
+
+\item{gamma}{Hazards ratio of responders and non-responders}
+
+\item{delta}{Least difference to decide superiority of high dose}
+
+\item{drop_rate}{Drop-out rate}
+
+\item{enroll}{Enrollment rate}
+
+\item{interim_t}{A vector of information fractions of final stage}
+}
+\value{
+A one row data frame of simulation results, including the parameter
+settings, the O'Brien-Fleming boundaries for interim and final analyses:
+c.1, c.2, the overall censoring rate: cen_rate, the mean study duration: dur,
+the probability of high dose is better than low dose: prob_21, the probability
+of rejecting H_1 or H_2: rej_12, the probability of rejecting H_1 only: rej_1,
+the probability of rejecting H_2 only: rej_2.
+}
 \description{
-simulation function
+Simulation study for a trial based on the DTL design
 }

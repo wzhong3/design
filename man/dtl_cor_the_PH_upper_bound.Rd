@@ -2,10 +2,25 @@
 % Please edit documentation in R/dtlcor_fun.R
 \name{dtl_cor_the_PH_upper_bound}
 \alias{dtl_cor_the_PH_upper_bound}
-\title{get theoretical upper bound of correlation coefficient}
+\title{Theoretical upper bound of correlation coefficient between
+time-to-event primary endpoint and binary surrogate endpoint}
 \usage{
 dtl_cor_the_PH_upper_bound(tau_k, pi_ar = 0.5, q, gamma)
 }
+\arguments{
+\item{tau_k}{Equals n/n_k, where n is the number of patients per treatment
+arm at the DTL look and n_k is the number of patients in both
+selected and control arms at the kth interim analysis.}
+
+\item{pi_ar}{Allocation rate of treatment and control (0.5 by default)}
+
+\item{q}{Response rate under the null}
+
+\item{gamma}{Hazards ratio of responders and non-responders}
+}
+\value{
+Theoretical upper bound of correlation coefficient
+}
 \description{
-get theoretical upper bound of correlation coefficient
+Get theoretical upper bound of correlation coefficient
 }
