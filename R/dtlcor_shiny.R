@@ -1,6 +1,9 @@
 
+#' @title Shiny App of drop-the-losers (DTL) design 
+#' 
+#' @description Interactive shiny App of drop-the-losers (DTL) design 
+#' 
 #' @export
-#'
 dtl_shiny <- function(appname = "shiny") {
 
     appDir <- system.file(appname, package = "dtlcor")
